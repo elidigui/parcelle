@@ -15,10 +15,12 @@ class TestGeosvg(ut.TestCase):
         """ Set test up """
         self.rep_test  = "test"
         self.TestLot1  = self.rep_test + os.sep + "test_lot1.csv"
+        self.TestLot2  = self.rep_test + os.sep + "test_lot2.csv"
         self.TestCoul1 = self.rep_test + os.sep + "test_couleur1.csv"
         self.Testsvg1  = self.rep_test + os.sep + "test_svg1.svg"
         self.Testsvg2  = self.rep_test + os.sep + "test_svg2.svg"
         self.a1 = Par.Geosvg(self.TestCoul1, self.TestLot1, self.Testsvg1)
+        self.a2 = Par.Geosvg(self.TestCoul1, self.TestLot2, self.Testsvg2)
         self.style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:0.38000039;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#8cff00;fill-opacity:0;fill-rule:evenodd;stroke:#800000;stroke-width:4.65311146;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
         self.style2="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:0.38000039;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#123456;fill-opacity:0;fill-rule:evenodd;stroke:#800000;stroke-width:4.65311146;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
         self.c = "#123456"
@@ -48,20 +50,21 @@ class TestGeosvg(ut.TestCase):
     def test_xpath_ellipse_svg(self):
         """ Test if the function can find cx in ellipse in a simple svg """
         id = "ellipse"
-        cx = self.a1.C.xpath('.//ellipse[@id="%s"]/@cx' % id)
-        self.assertEqual(cx[0], "301.42856","Don't read the tag")
+        cx = self.a1.C.xpath('.//svg:ellipse[@id="%s"]/@cx' % id,namespaces=self.a1.ns)
+        self.assertEqual(cx[0], "301.42856","Doesn't read the tag")
 
     def test_xpath_path_style_svg1(self):
         """ Test if the function can find style attribute of the path(id=the_id) 
         in a simple svg """
         s = self.a1.style(self.id)
-        self.assertEqual(s, self.style, "Don't read the tag")
+        self.assertEqual(s, self.style, "Doesn't match the attribute style")
         
     def test_xpath_path_style_svg2(self):
-        """ Test if the function can find style(color) in path attribut style a simple svg """
+        """ Test if the function can find style(color) in path attribut style 
+        a simple svg """
         s = self.a1.style(self.id)
         color=s.split(";")[0]
-        self.assertEqual(color,"color:#000000", "Don't read the tag")
+        self.assertEqual(color,"color:#000000", "Doesn't match the style.color")
 
     def test_dict_sub_attribut_opacity(self):
         """
@@ -70,20 +73,13 @@ class TestGeosvg(ut.TestCase):
         """
         s = self.a1.style(self.id)
         d = self.a1.dict_sub_attribut(s)
-        self.assertEqual(d["opacity"],self.opacity1, "Don't read the tag")        
+        self.assertEqual(d["opacity"],self.opacity1, "Doesn't match the style.opacity\
+        in the dict")        
      
     def test_sub_fill_svg(self):
-        """ Test if the function read the header of the color.csv file """
+        """ Test if the function sub_fill changes path(id=self.id)style.color"""
         s = self.a1.style(self.id)
-        #print("s=" + s[0])
         s2= self.a1.sub_fill(s,self.c)
-        # print("s2="+s2)
-        # ds2=dict(s2.split(";"))
-        # for it in ds2:
-            # print(it)
-        # fill = s2.split(";")[0]
-        # print("c1="+self.c)
-        # print("c2="+color)
         self.assertEqual(s2, self.style2, "Don't read the tag")
 
     #def sub_fill(self, s, rgb):
