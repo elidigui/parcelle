@@ -32,15 +32,19 @@ class Geosvg:
         self.C    = ET.parse(F_carte)
         #self.lot=lit_lots(F_lot)
         #self.F_out=F_carte+"out.svg"
-
+        self.ns={'svg':"http://www.w3.org/2000/svg"}
+    
     def style(self,the_id):
         """
         Find the style attribute of the tag path that contains the attribute
         id="the_id".
         """
-        s=self.C.xpath('.//path[@id="%s"]/@style'%the_id)
+        print(the_id)
+        s=self.C.xpath('.//svg:path[@id="%s"]/@style'%the_id,namespaces=self.ns)
         return(s[0])
-
+        # print(s)
+        # return(s)
+    
     def sub_fill(self,s,new_rgb):
         """
         Substitute rgb color, of the "fill:" sub-attribute of the attribute style
@@ -71,21 +75,22 @@ class Geosvg:
         """
         for lot in self.lots.keys():
             for num_parcelle in self.lots[lot].dropna():
-                print(lot+":"+num_parcelle)
-                id=num_parcelle
-                s=style(id)
-                s2=sub_fill(s,"fill:#111111")
-               # for rank in self.C.iter('path'):
-                   # if rank.attrib["id"]==id:
-                       # rank.set('style', s2)
-                       # print(rank.attrib["style"]) 
+                print(lot) #+":"+num_parcelle)
+                id=str(num_parcelle)
+                print(id)
+                s=self.style(id)
+                # s2=sub_fill(s,"fill:#111111")
+                # for rank in self.C.iter('path'):
+                    # if rank.attrib["id"]==id:
+                        # rank.set('style', s2)
+                        # print(rank.attrib["style"]) 
         #self.C.write(self.F_out)
     
-    def svg_to_png(self,the_svg)
+    def svg_to_png(self,the_svg):
         """
         Convert an svg file into a png file
         """
-        
+        pass
     
     
 # if __name__ == '__main__':
