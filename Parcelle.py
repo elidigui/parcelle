@@ -31,7 +31,7 @@ class Geosvg:
         self.lots  = pd.read_csv(F_lot, sep=";", encoding="utf8", header=0)
         self.C    = ET.parse(F_carte)
         #self.lot=lit_lots(F_lot)
-        #self.F_out=F_carte+"out.svg"
+        self.F_out=F_carte+"out.svg"
         self.ns={'svg':"http://www.w3.org/2000/svg"}
     
     def style(self,the_id):
@@ -52,7 +52,7 @@ class Geosvg:
         """
         fill2="fill:"+new_rgb
         print(fill2)
-        s2 = re.sub("fill:#\S\S\S\S\S\S", fill2, s)
+        s2 = re.sub("(fill:#\S\S\S\S\S\S|fill:none)", fill2, s)
         return(s2)
         
     def dict_sub_attribut(self,s):
@@ -73,18 +73,25 @@ class Geosvg:
         retrouve les parcelles de chaque lot dans le cadastre
         et lui donne la couleur indiquee dans couleurs.
         """
-        for lot in self.lots.keys():
+        for i_lot,lot in enumerate(self.lots.keys()):
             for num_parcelle in self.lots[lot].dropna():
-                print(lot) #+":"+num_parcelle)
-                id=str(num_parcelle)
-                print(id)
+                # print(lot) #+":"+num_parcelle)
+                coul=self.couls["RGB"][i_lot]
+                id=str(int(num_parcelle))
+                # print(id)
                 s=self.style(id)
-                # s2=sub_fill(s,"fill:#111111")
+                # print(s)
+                s2=self.sub_fill(s,coul)
+                # print(s2)
                 # for rank in self.C.iter('path'):
-                    # if rank.attrib["id"]==id:
+                for rank in self.C.xpath('.//svg:path',namespaces=self.ns):
+                    if rank.attrib["id"]==id:
+                        rank.attrib["style"]=s2
                         # rank.set('style', s2)
-                        # print(rank.attrib["style"]) 
-        #self.C.write(self.F_out)
+                        print(rank.attrib["style"]) 
+        # print(self.C.tostring())
+        # self.C.write(self.F_out)
+        self.C.write(self.F_out)
     
     def svg_to_png(self,the_svg):
         """
