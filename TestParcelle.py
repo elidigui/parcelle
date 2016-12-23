@@ -7,6 +7,7 @@ Created on Fri Oct 07 23:51:56 2016
 import Parcelle as Par
 import unittest as ut
 import os
+import hashlib as h
 
     
 class TestGeosvg(ut.TestCase):
@@ -15,12 +16,16 @@ class TestGeosvg(ut.TestCase):
         """ Set test up """
         self.rep_test  = "test"
         self.TestLot1  = self.rep_test + os.sep + "test_lot1.csv"
-        self.TestLot2  = self.rep_test + os.sep + "test_lot2.csv"
         self.TestCoul1 = self.rep_test + os.sep + "test_couleur1.csv"
         self.Testsvg1  = self.rep_test + os.sep + "test_svg1.svg"
-        self.Testsvg2  = self.rep_test + os.sep + "test_svg2.svg"
         self.a1 = Par.Geosvg(self.TestCoul1, self.TestLot1, self.Testsvg1)
-        self.a2 = Par.Geosvg(self.TestCoul1, self.TestLot2, self.Testsvg2)
+        
+        self.TestLot2  = self.rep_test + os.sep + "test_lot2.csv"
+        self.TestCoul2 = self.rep_test + os.sep + "test_couleur2.csv"
+        self.Testsvg2  = self.rep_test + os.sep + "test_svg2.svg"
+        self.Testsvg2ok  = self.rep_test + os.sep + "test_svg2_ok.svg"
+        self.a2 = Par.Geosvg(self.TestCoul2, self.TestLot2, self.Testsvg2)
+               
         self.style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:0.38000039;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#8cff00;fill-opacity:0;fill-rule:evenodd;stroke:#800000;stroke-width:4.65311146;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
         self.style2="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:0.38000039;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#123456;fill-opacity:0;fill-rule:evenodd;stroke:#800000;stroke-width:4.65311146;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
         self.c = "#123456"
@@ -82,10 +87,41 @@ class TestGeosvg(ut.TestCase):
         s2= self.a1.sub_fill(s,self.c)
         self.assertEqual(s2, self.style2, "Don't read the tag")
 
-    #def sub_fill(self, s, rgb):
+    def test_colorie_lot1(self):
+        """ Change the color of path to write and compare to a test file with 
+        write path"""
+        self.a2.colorie_lot()
+        t=TestFile(self.a2.F_out,self.Testsvg2ok)
+        self.assertEqual(t.cmp, True, "Two files are different")
 
 
+class TestFile:
+    """ tool for comparing files """
+    
+    def __init__(self,F1,F2):
+        """
+        Definit les attribue de Lot
+        """
+        self.cmp=self.is_contents_same(F1,F2)
+        
+    def checksum(self,f):
+        """ Compute md5 sum of a file"""
+        md5 = h.md5()
+        # file = open(f,"r",encoding='utf-8')
+        file = open(f,"rb")
+        md5.update(file.read())
+        return md5.hexdigest()
 
+    def is_contents_same(self,f1, f2):
+        """return true if the md5 sum of f1 and f2 are
+        the same, false ether"""
+        return self.checksum(f1) == self.checksum(f2)
+
+    # def cmp_files(f1,f2):
+        # if not is_contents_same('foo.txt', 'bar.txt'):
+        # print 'The contents are not the same!'
+
+        
 #List of TestSuites:
 suite1 = ut.TestLoader().loadTestsFromTestCase(TestGeosvg)
 alltests = ut.TestSuite([suite1])

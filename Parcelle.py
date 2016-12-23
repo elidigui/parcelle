@@ -41,7 +41,10 @@ class Geosvg:
         """
         print(the_id)
         s=self.C.xpath('.//svg:path[@id="%s"]/@style'%the_id,namespaces=self.ns)
-        return(s[0])
+        if len(s)!= 0:
+            return(s[0])
+        else:
+            print("La parcelle n°",the_id," n'existe pas ou est mal rensegnee")
         # print(s)
         # return(s)
     
@@ -78,11 +81,11 @@ class Geosvg:
                 # print(lot) #+":"+num_parcelle)
                 coul=self.couls["RGB"][i_lot]
                 id=str(int(num_parcelle))
-                # print(id)
+                print(id)
                 s=self.style(id)
-                # print(s)
+                print(s)
                 s2=self.sub_fill(s,coul)
-                # print(s2)
+                print(s2)
                 # for rank in self.C.iter('path'):
                 for rank in self.C.xpath('.//svg:path',namespaces=self.ns):
                     if rank.attrib["id"]==id:
