@@ -30,6 +30,7 @@ class TestGeosvg(ut.TestCase):
         self.style2="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:0.38000039;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#123456;fill-opacity:0;fill-rule:evenodd;stroke:#800000;stroke-width:4.65311146;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
         self.c = "#123456"
         self.id = "ellipse1"
+        self.id2 = "popo"
         self.opacity1="0.38000039"
         #     "color:#000000;clip-rule:nonzero;display:inline;\
         # overflow:visible;visibility:visible;opacity:0.38000039;\
@@ -70,6 +71,11 @@ class TestGeosvg(ut.TestCase):
         s = self.a1.style(self.id)
         color=s.split(";")[0]
         self.assertEqual(color,"color:#000000", "Doesn't match the style.color")
+        
+    def test_xpath_path_style_svg3(self):
+        """ Test if the function style return 0 if there is no path.id=self.id2"""
+        s = self.a1.style(self.id2)
+        self.assertEqual(s,0, "Doesn't match the style.color")
 
     def test_dict_sub_attribut_opacity(self):
         """
