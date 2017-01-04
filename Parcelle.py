@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# *- coding: utf-8 -*-
 """
 Created on Fri Oct 07 23:51:56 2016
 
@@ -24,38 +24,34 @@ class Geosvg:
     #def __init__(self,F_carte,F_coul,F_lot):
     def __init__(self,F_coul,F_lot,F_carte):
         """
-        Definit les attribue de Lot
+        Define Lot's attributs
         """
-        #self.coul=lit_couleurs(F_coul)
         self.couls = pd.read_csv(F_coul, sep=";", encoding="utf8", header=0)
         self.lots  = pd.read_csv(F_lot, sep=";", encoding="utf8", header=0)
         self.C    = ET.parse(F_carte)
-        #self.lot=lit_lots(F_lot)
-        self.F_out=F_carte+"out.svg"
+        self.F_out=F_carte[:-4]+"_out"+F_carte[-4:]
         self.ns={'svg':"http://www.w3.org/2000/svg"}
-    
+
     def style(self,the_id):
         """
-        Find the style attribute of the tag path that contains the attribute
-        id="the_id".
+        Find path(id="the_id").style
         """
-        print(the_id)
+        #print(the_id)
         s=self.C.xpath('.//svg:path[@id="%s"]/@style'%the_id,namespaces=self.ns)
         if len(s)!= 0:
             return(s[0])
         else:
-            print("La parcelle n°",the_id," n'existe pas ou est mal rensegnee")
+            print("La parcelle n ",the_id," n'existe pas ou est mal rensegnee")
             return(0)
         # print(s)
         # return(s)
     
     def sub_fill(self,s,new_rgb):
         """
-        Substitute rgb color, of the "fill:" sub-attribute of the attribute style
-        s, by the new rgb color new_rgb.
+        Substitute rgb color in style "fill:" with the new rgb color new_rgb.
         """
         fill2="fill:"+new_rgb
-        print(fill2)
+        #print(fill2)
         s2 = re.sub("(fill:#\S\S\S\S\S\S|fill:none)", fill2, s)
         return(s2)
         
@@ -73,9 +69,8 @@ class Geosvg:
 
     def colorie_lot(self):
         """
-        A partir de lots, couleurs et de cadastre:
-        retrouve les parcelles de chaque lot dans le cadastre
-        et lui donne la couleur indiquee dans couleurs.
+        With self.lots, self.couls and self.C:
+        substitute parcelles of each lot in self.C and give it the self.couls 
         """
         for i_lot,lot in enumerate(self.lots.keys()):
             for num_parcelle in self.lots[lot].dropna():
@@ -96,9 +91,7 @@ class Geosvg:
                             rank.attrib["style"]=s2
                             # rank.set('style', s2)
                             # print(rank.attrib["style"]) 
-        # print(self.C.tostring())
-        # self.C.write(self.F_out)
-        self.C.write(self.F_out)
+        self.C.write(self.F_out,encoding='utf8')
     
     def svg_to_png(self,the_svg):
         """

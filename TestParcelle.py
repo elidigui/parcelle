@@ -15,16 +15,16 @@ class TestGeosvg(ut.TestCase):
     def setUp(self):
         """ Set test up """
         self.rep_test  = "test"
-        self.TestLot1  = self.rep_test + os.sep + "test_lot1.csv"
-        self.TestCoul1 = self.rep_test + os.sep + "test_couleur1.csv"
-        self.Testsvg1  = self.rep_test + os.sep + "test_svg1.svg"
+
+        self.TestLot1  = self.rep_test + os.sep + u"test_lot1.csv"
+        self.TestCoul1 = self.rep_test + os.sep + u"test_couleur1.csv"
+        self.Testsvg1  = self.rep_test + os.sep + u"test_svg1.svg"
         self.a1 = Par.Geosvg(self.TestCoul1, self.TestLot1, self.Testsvg1)
         
-        self.TestLot2  = self.rep_test + os.sep + "test_lot2.csv"
-        self.TestCoul2 = self.rep_test + os.sep + "test_couleur2.csv"
-        self.Testsvg2  = self.rep_test + os.sep + "test_svg2.svg"
-        self.Testsvg2ok  = self.rep_test + os.sep + "test_svg2_ok.svg"
-        self.a2 = Par.Geosvg(self.TestCoul2, self.TestLot2, self.Testsvg2)
+        self.TestLot2  = self.rep_test + os.sep + u"test_lot2.csv"
+        self.Testsvg2  = self.rep_test + os.sep + u"test_svg2.svg"
+        self.Testsvg2ok = self.rep_test + os.sep + u"test_svg2_ok.svg"
+        self.a2 = Par.Geosvg(self.TestCoul1, self.TestLot2, self.Testsvg2)
                
         self.style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:0.38000039;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#8cff00;fill-opacity:0;fill-rule:evenodd;stroke:#800000;stroke-width:4.65311146;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
         self.style2="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:0.38000039;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#123456;fill-opacity:0;fill-rule:evenodd;stroke:#800000;stroke-width:4.65311146;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
@@ -75,7 +75,7 @@ class TestGeosvg(ut.TestCase):
     def test_xpath_path_style_svg3(self):
         """ Test if the function style return 0 if there is no path.id=self.id2"""
         s = self.a1.style(self.id2)
-        self.assertEqual(s,0, "Doesn't match the style.color")
+        self.assertEqual(s,0, "Doesn't match the 0 if a path(id=the_id) not found")
 
     def test_dict_sub_attribut_opacity(self):
         """
@@ -94,7 +94,7 @@ class TestGeosvg(ut.TestCase):
         self.assertEqual(s2, self.style2, "Don't read the tag")
 
     def test_colorie_lot1(self):
-        """ Change the color of path to write and compare to a test file with 
+        """ Change the color of path to write and compare to a test file with
         write path"""
         self.a2.colorie_lot()
         t=TestFile(self.a2.F_out,self.Testsvg2ok)
@@ -114,13 +114,16 @@ class TestFile:
         """ Compute md5 sum of a file"""
         md5 = h.md5()
         # file = open(f,"r",encoding='utf-8')
-        file = open(f,"rb")
-        md5.update(file.read())
-        return md5.hexdigest()
+        with open(f,"rb") as file:
+            md5.update(file.read())
+            print(file.readlines())
+            return md5.hexdigest()
 
     def is_contents_same(self,f1, f2):
         """return true if the md5 sum of f1 and f2 are
         the same, false ether"""
+       # print(self.checksum(f1))
+       # print(self.checksum(f2))
         return self.checksum(f1) == self.checksum(f2)
 
     # def cmp_files(f1,f2):
