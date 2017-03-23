@@ -7,13 +7,13 @@ To color the map, to csv file (table) have to be provoded.
 -The table which gathere zones into sets.
 -The table that associate a color to each set.
 
-How to use it. Open a python terminal into the directory which contain Parcelle.py:
+# How to use it.
+Open a python terminal into the directory which contain Parcelle.py:
 import Parcelle as P
 G=P.GeoSvg("color","sets","map")
 G.colorie_lot()
-
-Here, 
-"color" is the name of a csv file. 
+## "color"
+It is the name of a csv file. 
 For example:
 Lot1;Lot2;Lot3;Lot4;Lot5
 92;;89;18;76
@@ -51,7 +51,9 @@ Lot1;Lot2;Lot3;Lot4;Lot5
 ;;;51
 ;;;60
 
-"sets" is the name of a csv file:
+## "sets"
+It is the name of a csv file:
+
 For example:
 Lot;Couleur;RGB
 1;red;#FF0000
@@ -60,5 +62,6 @@ Lot;Couleur;RGB
 4;yellow;#FFFF00
 5;blue;#0000FF
 
-"map" is the name of the matching svg file which containe
+## "map"
+It is the name of the matching svg file which containe
 zones.
